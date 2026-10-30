@@ -27,5 +27,14 @@ workflows:
           zip -qry ../qingzhang-unsigned.ipa Payload
           cd ../..
           ls -lh build/qingzhang-unsigned.ipa
+      # 把包提交回仓库，这样不用在网页上找下载按钮，本机可以直接取
+      - name: 把 IPA 推回仓库
+        script: |
+          cp build/qingzhang-unsigned.ipa ./qingzhang-unsigned.ipa
+          git config user.name "codemagic-bot"
+          git config user.email "ci@codemagic.io"
+          git add -f qingzhang-unsigned.ipa
+          git commit -m "ci: attach unsigned ipa [skip ci]" || true
+          git push origin HEAD:main || echo "push failed, use artifacts instead"
     artifacts:
       - build/qingzhang-unsigned.ipa
