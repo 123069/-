@@ -7,6 +7,10 @@ on:
   workflow_dispatch:
   push:
     branches: [main, master]
+  # 每天 UTC 06:00（中国 14:00，美国凌晨）自动跑一次：这个时段 GitHub 的
+  # macOS 机器池最空，不容易因为排队超时被取消。
+  schedule:
+    - cron: '0 6 * * *'
 
 jobs:
   build-ipa:
