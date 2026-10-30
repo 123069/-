@@ -1,0 +1,31 @@
+workflows:
+  ios-unsigned:
+    name: 清账 · 未签名 IPA
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      flutter: 3.47.9
+      xcode: latest
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache
+    scripts:
+      - name: Flutter 依赖
+        script: |
+          flutter --version
+          flutter pub get
+      - name: 构建 iOS（不签名）
+        script: |
+          flutter build ios --release --no-codesign
+      - name: 打包成未签名 IPA
+        script: |
+          set -e
+          mkdir -p build/ipa_payload/Payload
+          cp -R build/ios/iphoneos/Runner.app build/ipa_payload/Payload/
+          cd build/ipa_payload
+          zip -qry ../qingzhang-unsigned.ipa Payload
+          cd ../..
+          ls -lh build/qingzhang-unsigned.ipa
+    artifacts:
+      - build/qingzhang-unsigned.ipa
